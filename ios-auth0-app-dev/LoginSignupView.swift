@@ -18,6 +18,7 @@ struct LoginSignupView: View {
     @State var clientId = ""
     @State var domain = ""
     @State var isLoggingIn = false
+    @State var isAlertVisible = false
     @ObservedObject var appManager: AppManager = .shared
     
     var body: some View {
@@ -92,6 +93,7 @@ struct LoginSignupView: View {
                         } catch {
                             print("Failed with: \(error)")
                             self.isLoggingIn = false
+                            self.isAlertVisible.toggle()
                         }
                     }
                     
@@ -123,6 +125,7 @@ struct LoginSignupView: View {
                     }catch let err{
                         print(err.localizedDescription)
                         self.isLoggingIn = false
+                        self.isAlertVisible.toggle()
                     }
                 }
             }){
@@ -169,6 +172,13 @@ struct LoginSignupView: View {
         }
         .onReceive(self.appManager.objectWillChange) { _ in
             self.isLoggedIn = ShareStore().isLoggedIn
+        }
+        .alert("An error occurred.", isPresented: self.$isAlertVisible) {
+            Button("Ok") {
+                
+            }
+        } message: {
+            Text("Please ensure your credentials are correct.")
         }
     }
 }
